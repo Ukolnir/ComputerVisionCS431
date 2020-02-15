@@ -40,12 +40,13 @@ namespace CVLab01
             return GreyImage;
         }
 
-        public Bitmap TransformWithLinearLightCorrection() {
+        public Bitmap TransformWithLinearCorrection() {
             Bitmap result = new Bitmap(SourceImage.Width, SourceImage.Height);
             ColorImage = new Bitmap(SourceImage.Width, SourceImage.Height);
+            IntensityAfterTransform = new int[256];
+
             //Поиск максимального и минимального индекса
             int max = 255, min = 0;
-            IntensityAfterTransform = new int[256];
             for (int i = 0; i < 256; ++i)
                 if (IntensitySource[i] != 0) {
                     min = i;
@@ -60,7 +61,6 @@ namespace CVLab01
 
             for (int x = 0; x < result.Width; ++x)
                 for (int y = 0; y < result.Height; ++y){
-                    //var t = GreyImage.GetPixel(x, y);
                     yuvImage[x, y].Y = (yuvImage[x, y].Y - min) * 255 / (max - min);
                     var ytemp = Common.CheckChannel((int)yuvImage[x, y].Y);
                     ++IntensityAfterTransform[ytemp];
@@ -69,6 +69,25 @@ namespace CVLab01
                         ytemp,
                         ytemp));
                     ColorImage.SetPixel(x,y, yuvImage[x, y].ToRGB());
+                }
+            return result;
+        }
+
+        public Bitmap TransformWithGammaCorrection(double gamma = 1) {
+            Bitmap result = new Bitmap(SourceImage.Width, SourceImage.Height);
+            ColorImage = new Bitmap(SourceImage.Width, SourceImage.Height);
+            IntensityAfterTransform = new int[256];
+
+            for (int x = 0; x < result.Width; ++x)
+                for (int y = 0; y < result.Height; ++y) {
+                    yuvImage[x, y].Y = Math.Pow(yuvImage[x, y].Y,gamma);
+                    var ytemp = Common.CheckChannel((int)yuvImage[x, y].Y);
+                    ++IntensityAfterTransform[ytemp];
+                    result.SetPixel(x, y, Color.FromArgb(
+                        ytemp,
+                        ytemp,
+                        ytemp));
+                    ColorImage.SetPixel(x, y, yuvImage[x, y].ToRGB());
                 }
             return result;
         }

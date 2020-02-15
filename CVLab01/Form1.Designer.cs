@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadPictureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,12 +61,14 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panelFunctionCorrection = new System.Windows.Forms.Panel();
+            this.changeApplyFunctionCorrection = new System.Windows.Forms.Button();
             this.applyFunctionCorrection = new System.Windows.Forms.Button();
             this.chartFunctionCorrection2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chartFunctionCorrection1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.pictureBoxFunctionCorrection1 = new System.Windows.Forms.PictureBox();
             this.pictureBoxFunctionCorrection2 = new System.Windows.Forms.PictureBox();
-            this.changeApplyFunctionCorrection = new System.Windows.Forms.Button();
+            this.comboBoxFunctionCorrection = new System.Windows.Forms.ComboBox();
+            this.gammaCounterFunctionCorrection = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panelCorrectionWithBasicColor.SuspendLayout();
@@ -287,6 +289,7 @@
             // saveFileDialog1
             // 
             this.saveFileDialog1.DefaultExt = "\".jpg\"";
+            this.saveFileDialog1.Filter = "\"Image Files(*.BMP;*.JPG;**.PNG)|*.BMP;*.JPG;**.PNG|All files (*.*)|*.*\"";
             this.saveFileDialog1.Title = "Сохранить рисунок как";
             // 
             // openFileDialog1
@@ -296,6 +299,8 @@
             // 
             // panelFunctionCorrection
             // 
+            this.panelFunctionCorrection.Controls.Add(this.gammaCounterFunctionCorrection);
+            this.panelFunctionCorrection.Controls.Add(this.comboBoxFunctionCorrection);
             this.panelFunctionCorrection.Controls.Add(this.changeApplyFunctionCorrection);
             this.panelFunctionCorrection.Controls.Add(this.applyFunctionCorrection);
             this.panelFunctionCorrection.Controls.Add(this.chartFunctionCorrection2);
@@ -307,6 +312,16 @@
             this.panelFunctionCorrection.Size = new System.Drawing.Size(668, 726);
             this.panelFunctionCorrection.TabIndex = 7;
             this.panelFunctionCorrection.Visible = false;
+            // 
+            // changeApplyFunctionCorrection
+            // 
+            this.changeApplyFunctionCorrection.Location = new System.Drawing.Point(3, 344);
+            this.changeApplyFunctionCorrection.Name = "changeApplyFunctionCorrection";
+            this.changeApplyFunctionCorrection.Size = new System.Drawing.Size(35, 47);
+            this.changeApplyFunctionCorrection.TabIndex = 5;
+            this.changeApplyFunctionCorrection.Text = "<->";
+            this.changeApplyFunctionCorrection.UseVisualStyleBackColor = true;
+            this.changeApplyFunctionCorrection.Click += new System.EventHandler(this.changeApplyFunctionCorrection_Click);
             // 
             // applyFunctionCorrection
             // 
@@ -320,20 +335,20 @@
             // 
             // chartFunctionCorrection2
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chartFunctionCorrection2.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chartFunctionCorrection2.Legends.Add(legend1);
+            chartArea5.Name = "ChartArea1";
+            this.chartFunctionCorrection2.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.chartFunctionCorrection2.Legends.Add(legend5);
             this.chartFunctionCorrection2.Location = new System.Drawing.Point(329, 456);
             this.chartFunctionCorrection2.Name = "chartFunctionCorrection2";
             this.chartFunctionCorrection2.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
             this.chartFunctionCorrection2.PaletteCustomColors = new System.Drawing.Color[] {
         System.Drawing.Color.Black};
-            series1.ChartArea = "ChartArea1";
-            series1.IsVisibleInLegend = false;
-            series1.Legend = "Legend1";
-            series1.Name = "Img";
-            this.chartFunctionCorrection2.Series.Add(series1);
+            series5.ChartArea = "ChartArea1";
+            series5.IsVisibleInLegend = false;
+            series5.Legend = "Legend1";
+            series5.Name = "Img";
+            this.chartFunctionCorrection2.Series.Add(series5);
             this.chartFunctionCorrection2.Size = new System.Drawing.Size(328, 261);
             this.chartFunctionCorrection2.TabIndex = 3;
             this.chartFunctionCorrection2.Text = "chart2";
@@ -341,21 +356,21 @@
             // 
             // chartFunctionCorrection1
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chartFunctionCorrection1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chartFunctionCorrection1.Legends.Add(legend2);
+            chartArea6.Name = "ChartArea1";
+            this.chartFunctionCorrection1.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            this.chartFunctionCorrection1.Legends.Add(legend6);
             this.chartFunctionCorrection1.Location = new System.Drawing.Point(329, 28);
             this.chartFunctionCorrection1.Name = "chartFunctionCorrection1";
             this.chartFunctionCorrection1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
             this.chartFunctionCorrection1.PaletteCustomColors = new System.Drawing.Color[] {
         System.Drawing.Color.Black};
-            series2.ChartArea = "ChartArea1";
-            series2.IsVisibleInLegend = false;
-            series2.Legend = "Legend1";
-            series2.LegendText = "Before";
-            series2.Name = "Img";
-            this.chartFunctionCorrection1.Series.Add(series2);
+            series6.ChartArea = "ChartArea1";
+            series6.IsVisibleInLegend = false;
+            series6.Legend = "Legend1";
+            series6.LegendText = "Before";
+            series6.Name = "Img";
+            this.chartFunctionCorrection1.Series.Add(series6);
             this.chartFunctionCorrection1.Size = new System.Drawing.Size(328, 261);
             this.chartFunctionCorrection1.TabIndex = 2;
             this.chartFunctionCorrection1.Text = "chart1";
@@ -379,15 +394,28 @@
             this.pictureBoxFunctionCorrection2.TabIndex = 0;
             this.pictureBoxFunctionCorrection2.TabStop = false;
             // 
-            // changeApplyFunctionCorrection
+            // comboBoxFunctionCorrection
             // 
-            this.changeApplyFunctionCorrection.Location = new System.Drawing.Point(3, 344);
-            this.changeApplyFunctionCorrection.Name = "changeApplyFunctionCorrection";
-            this.changeApplyFunctionCorrection.Size = new System.Drawing.Size(35, 47);
-            this.changeApplyFunctionCorrection.TabIndex = 5;
-            this.changeApplyFunctionCorrection.Text = "<->";
-            this.changeApplyFunctionCorrection.UseVisualStyleBackColor = true;
-            this.changeApplyFunctionCorrection.Click += new System.EventHandler(this.changeApplyFunctionCorrection_Click);
+            this.comboBoxFunctionCorrection.FormattingEnabled = true;
+            this.comboBoxFunctionCorrection.Items.AddRange(new object[] {
+            "Линейная коррекция",
+            "Гамма-коррекция"});
+            this.comboBoxFunctionCorrection.Location = new System.Drawing.Point(203, 325);
+            this.comboBoxFunctionCorrection.Name = "comboBoxFunctionCorrection";
+            this.comboBoxFunctionCorrection.Size = new System.Drawing.Size(254, 21);
+            this.comboBoxFunctionCorrection.TabIndex = 6;
+            this.comboBoxFunctionCorrection.Text = "Линейная коррекция";
+            this.comboBoxFunctionCorrection.SelectedValueChanged += new System.EventHandler(this.comboBoxFunctionCorrection_SelectedValueChanged);
+            // 
+            // gammaCounterFunctionCorrection
+            // 
+            this.gammaCounterFunctionCorrection.Location = new System.Drawing.Point(497, 325);
+            this.gammaCounterFunctionCorrection.Name = "gammaCounterFunctionCorrection";
+            this.gammaCounterFunctionCorrection.Size = new System.Drawing.Size(54, 20);
+            this.gammaCounterFunctionCorrection.TabIndex = 7;
+            this.gammaCounterFunctionCorrection.Text = "1,0";
+            this.gammaCounterFunctionCorrection.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.gammaCounterFunctionCorrection.Visible = false;
             // 
             // Form1
             // 
@@ -411,6 +439,7 @@
             this.panelCorrectionWithBasicColor.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.panelFunctionCorrection.ResumeLayout(false);
+            this.panelFunctionCorrection.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartFunctionCorrection2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartFunctionCorrection1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxFunctionCorrection1)).EndInit();
@@ -455,6 +484,8 @@
         private System.Windows.Forms.PictureBox pictureBoxFunctionCorrection1;
         private System.Windows.Forms.PictureBox pictureBoxFunctionCorrection2;
         private System.Windows.Forms.Button changeApplyFunctionCorrection;
+        private System.Windows.Forms.ComboBox comboBoxFunctionCorrection;
+        private System.Windows.Forms.TextBox gammaCounterFunctionCorrection;
     }
 }
 

@@ -137,23 +137,29 @@ namespace CVLab01
             chartFunctionCorrection1.Series["Img"].Points.Clear();
             for (int i = 0; i < 256; ++i)
                 chartFunctionCorrection1.Series["Img"].Points.AddY(correction3.IntensitySource[i]);
-            
         }
 
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
-        {
-            if (currentType == TransformType.FunctionCorrection){
+        private void pictureBox1_Paint(object sender, PaintEventArgs e){
+            if (currentType == TransformType.FunctionCorrection)
                 makeGreyAndHist();
-            }
+
         }
 
         private void applyFunctionCorrection_Click(object sender, EventArgs e){
-            //pictureBox2.Image = correction3.TransformWithLinearLightCorrection();
-            //pictureBox2.Update();
-            pictureBoxFunctionCorrection2.Image = correction3.TransformWithLinearLightCorrection();
-            pictureBox2.Image = correction3.ColorImage; //_--------------------------
             chartFunctionCorrection2.Visible = true;
             chartFunctionCorrection2.Series["Img"].Points.Clear();
+
+            switch ((string)comboBoxFunctionCorrection.SelectedItem){
+                case "Линейная коррекция":
+                    pictureBoxFunctionCorrection2.Image = correction3.TransformWithLinearCorrection();
+                    break;
+                case "Гамма-коррекция":
+                    pictureBoxFunctionCorrection2.Image =
+                        correction3.TransformWithGammaCorrection(Double.Parse(gammaCounterFunctionCorrection.Text));
+                    break;
+            }
+
+            pictureBox2.Image = correction3.ColorImage;
             for (int i = 0; i < 256; ++i)
                 chartFunctionCorrection2.Series["Img"].Points.AddY(correction3.IntensityAfterTransform[i]);
         }
@@ -164,6 +170,12 @@ namespace CVLab01
             pictureBox2.Image = null;
             pictureBoxFunctionCorrection2.Image = null;
             chartFunctionCorrection2.Visible = false;
+        }
+
+        private void comboBoxFunctionCorrection_SelectedValueChanged(object sender, EventArgs e)
+        {
+            gammaCounterFunctionCorrection.Visible = 
+                (string)comboBoxFunctionCorrection.SelectedItem == "Гамма-коррекция";
         }
     }
 }
