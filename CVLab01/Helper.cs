@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace CVLab01{
     public class Common {
-        public static int CheckChannel(int val) => val > 255 
+        public static int Clip(int val) => val > 255 
             ? 255 : (val < 0 ? 0 : val);
     }
 
@@ -24,9 +24,9 @@ namespace CVLab01{
             int G = (int)(Y - 0.2148 * U - 0.3805 * V);
             int B = (int)(Y + 2.1279 * U);
             return Color.FromArgb(
-                Common.CheckChannel(R),
-                Common.CheckChannel(G),
-                Common.CheckChannel(B));
+                Common.Clip(R),
+                Common.Clip(G),
+                Common.Clip(B));
         }
     }
 }

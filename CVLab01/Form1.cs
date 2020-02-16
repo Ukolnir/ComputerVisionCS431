@@ -11,7 +11,8 @@ using System.Drawing.Imaging;
 
 namespace CVLab01
 {
-    public enum TransformType { CorrectionWithBasicColor = 1, CorrectionGreyWorld, FunctionCorrection }
+    public enum TransformType { CorrectionWithBasicColor = 1, CorrectionGreyWorld, FunctionCorrection,
+        CorrectionWithEqualizationHist, CorrectionWithNormalizedHist }
 
     public partial class Form1 : Form
     {
@@ -30,7 +31,7 @@ namespace CVLab01
         CorrectionWithBasicColor correction1;
         CorrectionGreyWorld correction2;
         FunctionCorrection correction3;
-
+        CorrectionWithEqualizationHist correction4;
 
         //-------------------
 
@@ -41,6 +42,7 @@ namespace CVLab01
                 correction1 = new CorrectionWithBasicColor(sourceFile);
                 correction2 = new CorrectionGreyWorld(sourceFile);
                 correction3 = new FunctionCorrection(sourceFile);
+                correction4 = new CorrectionWithEqualizationHist(sourceFile);
             }  
         }
 
@@ -97,8 +99,22 @@ namespace CVLab01
                 case TransformType.FunctionCorrection:
                     functionCorrectionToolStripMenuItem.Enabled = true;
                     panelFunctionCorrection.Visible = false;
-                    chartFunctionCorrection1.Visible = false;
-                    chartFunctionCorrection2.Visible = false;
+                    chartHistCorrection1.Visible = false;
+                    chartHistCorrection2.Visible = false;
+                    
+                    break;
+                case TransformType.CorrectionWithEqualizationHist:
+                    correctionWithEqualizationHistToolStripMenuItem.Enabled = true;
+                    panelFunctionCorrection.Visible = false;
+                    chartHistCorrection1.Visible = false;
+                    chartHistCorrection2.Visible = false;
+                    break;
+                case TransformType.CorrectionWithNormalizedHist:
+                    correctionWithNormalizedHistToolStripMenuItem.Enabled = true;
+                    panelFunctionCorrection.Visible = false;
+
+                    numericUpDownCorrectionWithNormalizedHist2.Visible = false;
+                    numericUpDownCorrectionWithNormalizedHist1.Visible = false;
                     break;
             }
             pictureBox2.Image = null;
@@ -124,58 +140,112 @@ namespace CVLab01
             panelFunctionCorrection.Visible = true;
             currentType = TransformType.FunctionCorrection;
             label1.Text = currentType.ToString();
-
+            comboBoxFunctionCorrection.Visible = true;
             //------------
 
             if (pictureBox1.Image != null)
-                makeGreyAndHist();
+                makeGreyAndHist(correction3);
         }
 
-        private void makeGreyAndHist() {
-            pictureBoxFunctionCorrection1.Image = correction3.RGBtoGrey();
-            chartFunctionCorrection1.Visible = true;
-            chartFunctionCorrection1.Series["Img"].Points.Clear();
+        private void makeGreyAndHist(HistCorrection cor) {
+            pictureBoxHistCorrection1.Image = cor.RGBtoGrey();
+            chartHistCorrection1.Visible = true;
+            chartHistCorrection1.Series["Img"].Points.Clear();
             for (int i = 0; i < 256; ++i)
-                chartFunctionCorrection1.Series["Img"].Points.AddY(correction3.IntensitySource[i]);
+                chartHistCorrection1.Series["Img"].Points.AddY(cor.IntensitySource[i]);
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e){
-            if (currentType == TransformType.FunctionCorrection)
-                makeGreyAndHist();
-
+            switch (currentType) {
+                case TransformType.FunctionCorrection:
+                case TransformType.CorrectionWithNormalizedHist: //Добавить выявление границ 
+                    makeGreyAndHist(correction3);
+                    break;
+                case TransformType.CorrectionWithEqualizationHist:
+                    makeGreyAndHist(correction4);
+                    break;
+            }    
         }
 
         private void applyFunctionCorrection_Click(object sender, EventArgs e){
-            chartFunctionCorrection2.Visible = true;
-            chartFunctionCorrection2.Series["Img"].Points.Clear();
-
-            switch ((string)comboBoxFunctionCorrection.SelectedItem){
-                case "Линейная коррекция":
-                    pictureBoxFunctionCorrection2.Image = correction3.TransformWithLinearCorrection();
-                    break;
-                case "Гамма-коррекция":
-                    pictureBoxFunctionCorrection2.Image =
-                        correction3.TransformWithGammaCorrection(Double.Parse(gammaCounterFunctionCorrection.Text));
-                    break;
+            //ЗДЕСЬ ДОБАВИТЬ НОРМАЛИЗАЦИЮ ГИСТОГРАММЫ
+            if (currentType == TransformType.FunctionCorrection){
+                switch ((string)comboBoxFunctionCorrection.SelectedItem){
+                    case "Линейная коррекция":
+                        var mm = correction3.getMinMaxIntens();
+                        pictureBoxHistCorrection2.Image = 
+                            correction3.TransformWithLinearCorrection(mm.Item1, mm.Item2);
+                        break;
+                    case "Гамма-коррекция":
+                        pictureBoxHistCorrection2.Image =
+                            correction3.TransformWithGammaCorrection(Double.Parse(gammaCounterFunctionCorrection.Text));
+                        break;
+                }
+                fillHistAfterTransfrom(correction3);
             }
+            else {
+                pictureBoxHistCorrection2.Image = correction4.Transform();
+                fillHistAfterTransfrom(correction4);
+            }
+        }
 
-            pictureBox2.Image = correction3.ColorImage;
+        private void fillHistAfterTransfrom(HistCorrection cor) {
+            chartHistCorrection2.Visible = true;
+            chartHistCorrection2.Series["Img"].Points.Clear();
+            pictureBox2.Image = cor.ColorImage;
             for (int i = 0; i < 256; ++i)
-                chartFunctionCorrection2.Series["Img"].Points.AddY(correction3.IntensityAfterTransform[i]);
+                chartHistCorrection2.Series["Img"].Points.AddY(cor.IntensityAfterTransform[i]);
         }
 
         private void changeApplyFunctionCorrection_Click(object sender, EventArgs e)
         {
+            correction3 = new FunctionCorrection((Bitmap)pictureBox2.Image);
+            correction4 = new CorrectionWithEqualizationHist((Bitmap)pictureBox2.Image);
             pictureBox1.Image = pictureBox2.Image;
             pictureBox2.Image = null;
-            pictureBoxFunctionCorrection2.Image = null;
-            chartFunctionCorrection2.Visible = false;
+            pictureBoxHistCorrection2.Image = null;
+            chartHistCorrection2.Visible = false;
         }
 
         private void comboBoxFunctionCorrection_SelectedValueChanged(object sender, EventArgs e)
         {
             gammaCounterFunctionCorrection.Visible = 
                 (string)comboBoxFunctionCorrection.SelectedItem == "Гамма-коррекция";
+        }
+
+        private void changeApplyFunctionCorrection1_Click(object sender, EventArgs e){
+            correction3.Clear();
+            correction4.Clear();
+        }
+
+        private void correctionWithEkvalizationHistToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeType();
+            correctionWithEqualizationHistToolStripMenuItem.Enabled = false;
+            panelFunctionCorrection.Visible = true;
+            currentType = TransformType.CorrectionWithEqualizationHist;
+            label1.Text = currentType.ToString();
+            comboBoxFunctionCorrection.Visible = false;
+
+            if (pictureBox1.Image != null)
+                makeGreyAndHist(correction4);
+        }
+
+        private void correctionWithNormalizedHistToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            changeType();
+            correctionWithNormalizedHistToolStripMenuItem.Enabled = false;
+            panelFunctionCorrection.Visible = true;
+            currentType = TransformType.CorrectionWithNormalizedHist;
+            label1.Text = currentType.ToString();
+
+            if (pictureBox1.Image != null)
+                makeGreyAndHist(correction3);
+
+            comboBoxFunctionCorrection.Visible = false;
+            gammaCounterFunctionCorrection.Visible = false;
+            numericUpDownCorrectionWithNormalizedHist2.Visible = true;
+            numericUpDownCorrectionWithNormalizedHist1.Visible = true;
         }
     }
 }

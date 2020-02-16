@@ -15,22 +15,19 @@ namespace CVLab01
         }
     }
 
-    public class FunctionCorrection : Correction {
+    public class HistCorrection : Correction{
+        public HistCorrection(Bitmap bitmap) : base(bitmap){}
         public Bitmap GreyImage { get; set; }
         public Bitmap ColorImage { get; set; } //после трансформации
         public int[] IntensitySource = new int[256];
         public int[] IntensityAfterTransform;
-        YUV[,] yuvImage;
+        internal YUV[,] yuvImage;
 
-        public FunctionCorrection(Bitmap bitmap): base(bitmap){
-            
-        }
-
-        public Bitmap RGBtoGrey() {
+        public Bitmap RGBtoGrey(){
             GreyImage = new Bitmap(SourceImage.Width, SourceImage.Height);
             yuvImage = new YUV[SourceImage.Width, SourceImage.Height];
             for (int x = 0; x < GreyImage.Width; ++x)
-                for (int y = 0; y < GreyImage.Height; ++y) {
+                for (int y = 0; y < GreyImage.Height; ++y){
                     var t = SourceImage.GetPixel(x, y);
                     double c = 0.2126 * t.R + 0.7152 * t.G + 0.0722 * t.B;
                     ++IntensitySource[(int)c];
@@ -40,29 +37,74 @@ namespace CVLab01
             return GreyImage;
         }
 
-        public Bitmap TransformWithLinearCorrection() {
+        public void Clear() {
+            GreyImage = null;
+            ColorImage = null;
+            IntensitySource = new int[256];
+        }
+    }
+
+    public class CorrectionWithEqualizationHist : HistCorrection {
+        public CorrectionWithEqualizationHist(Bitmap bitmap) : base(bitmap) { }
+
+        public Bitmap Transform() {
             Bitmap result = new Bitmap(SourceImage.Width, SourceImage.Height);
             ColorImage = new Bitmap(SourceImage.Width, SourceImage.Height);
             IntensityAfterTransform = new int[256];
+            double[] temp = new double[256];
+            double n = SourceImage.Width * SourceImage.Height * 1.0;
+            for (int i = 0; i < 256; ++i)      
+                temp[i] = IntensitySource[i] / n;
+            for (int i = 1; i < 256; ++i) temp[i] += temp[i - 1];
 
-            //Поиск максимального и минимального индекса
+            for (int x = 0; x < result.Width; ++x)
+                for (int y = 0; y < result.Height; ++y) {
+                    yuvImage[x, y].Y = temp[Common.Clip((int)(yuvImage[x, y].Y))] * 255;
+                    var ytemp = Common.Clip((int)yuvImage[x, y].Y);
+                    ++IntensityAfterTransform[ytemp];
+                    result.SetPixel(x, y, Color.FromArgb(
+                        ytemp,
+                        ytemp,
+                        ytemp));
+                    ColorImage.SetPixel(x, y, yuvImage[x, y].ToRGB());
+                }
+            return result;
+        } 
+    }
+
+
+    public class FunctionCorrection : HistCorrection {
+       
+        public FunctionCorrection(Bitmap bitmap): base(bitmap){
+            
+        }
+
+        public Tuple<int, int> getMinMaxIntens() {
             int max = 255, min = 0;
             for (int i = 0; i < 256; ++i)
-                if (IntensitySource[i] != 0) {
+                if (IntensitySource[i] != 0){
                     min = i;
                     break;
                 }
 
-            for (int i = 255; i >=0; --i)
+            for (int i = 255; i >= 0; --i)
                 if (IntensitySource[i] != 0){
                     max = i;
                     break;
                 }
+            return Tuple.Create(min, max);
+        }
+
+        public Bitmap TransformWithLinearCorrection(int min, int max) {
+            Bitmap result = new Bitmap(SourceImage.Width, SourceImage.Height);
+            ColorImage = new Bitmap(SourceImage.Width, SourceImage.Height);
+            IntensityAfterTransform = new int[256];
 
             for (int x = 0; x < result.Width; ++x)
                 for (int y = 0; y < result.Height; ++y){
-                    yuvImage[x, y].Y = (yuvImage[x, y].Y - min) * 255 / (max - min);
-                    var ytemp = Common.CheckChannel((int)yuvImage[x, y].Y);
+                    yuvImage[x, y].Y = (yuvImage[x, y].Y - min) * 255 
+                                            / (max - min);
+                    var ytemp = Common.Clip((int)yuvImage[x, y].Y);
                     ++IntensityAfterTransform[ytemp];
                     result.SetPixel(x, y, Color.FromArgb(
                         ytemp,
@@ -81,7 +123,7 @@ namespace CVLab01
             for (int x = 0; x < result.Width; ++x)
                 for (int y = 0; y < result.Height; ++y) {
                     yuvImage[x, y].Y = Math.Pow(yuvImage[x, y].Y,gamma);
-                    var ytemp = Common.CheckChannel((int)yuvImage[x, y].Y);
+                    var ytemp = Common.Clip((int)yuvImage[x, y].Y);
                     ++IntensityAfterTransform[ytemp];
                     result.SetPixel(x, y, Color.FromArgb(
                         ytemp,
@@ -91,6 +133,7 @@ namespace CVLab01
                 }
             return result;
         }
+
     }
 
     //Коррекция с опорным цветом
@@ -106,9 +149,9 @@ namespace CVLab01
                 for (int y = 0; y < result.Height; ++y){
                     Color source = SourceImage.GetPixel(x, y);
                     Color replace = Color.FromArgb(
-                        Common.CheckChannel(source.R * (ColorDestination.R / ColorSource.R)),
-                        Common.CheckChannel(source.G * (ColorDestination.G / ColorSource.G)),
-                        Common.CheckChannel(source.B * (ColorDestination.B / ColorSource.B)));
+                        Common.Clip(source.R * (ColorDestination.R / ColorSource.R)),
+                        Common.Clip(source.G * (ColorDestination.G / ColorSource.G)),
+                        Common.Clip(source.B * (ColorDestination.B / ColorSource.B)));
                     result.SetPixel(x, y, replace);
                 }
             return result;
@@ -142,9 +185,9 @@ namespace CVLab01
                 for (int y = 0; y < SourceImage.Height; ++y) {
                     var t = SourceImage.GetPixel(x, y);
                     result.SetPixel(x, y, Color.FromArgb(t.A,
-                        Common.CheckChannel(t.R * avg / r),
-                        Common.CheckChannel(t.G * avg / g),
-                        Common.CheckChannel(t.B * avg / b)));
+                        Common.Clip(t.R * avg / r),
+                        Common.Clip(t.G * avg / g),
+                        Common.Clip(t.B * avg / b)));
                 }
             return result;
         }
