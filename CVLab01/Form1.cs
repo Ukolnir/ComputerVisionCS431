@@ -12,7 +12,7 @@ using System.Drawing.Imaging;
 namespace CVLab01
 {
     public enum TransformType { CorrectionWithBasicColor = 1, CorrectionGreyWorld, FunctionCorrection,
-        CorrectionWithEqualizationHist, CorrectionWithNormalizedHist }
+        CorrectionWithEqualizationHist }
 
     public partial class Form1 : Form
     {
@@ -104,20 +104,14 @@ namespace CVLab01
                     
                     break;
                 case TransformType.CorrectionWithEqualizationHist:
-                    correctionWithEqualizationHistToolStripMenuItem.Enabled = true;
+					correctionWithEkvalizationHistToolStripMenuItem.Enabled = true;
                     panelFunctionCorrection.Visible = false;
                     chartHistCorrection1.Visible = false;
                     chartHistCorrection2.Visible = false;
                     break;
-                case TransformType.CorrectionWithNormalizedHist:
-                    correctionWithNormalizedHistToolStripMenuItem.Enabled = true;
-                    panelFunctionCorrection.Visible = false;
-
-                    numericUpDownCorrectionWithNormalizedHist2.Visible = false;
-                    numericUpDownCorrectionWithNormalizedHist1.Visible = false;
-                    break;
             }
             pictureBox2.Image = null;
+			pictureBoxHistCorrection2.Image = null;
         }
 
         private void correctionGreyWorldToolStripMenuItem_Click(object sender, EventArgs e){
@@ -158,7 +152,6 @@ namespace CVLab01
         private void pictureBox1_Paint(object sender, PaintEventArgs e){
             switch (currentType) {
                 case TransformType.FunctionCorrection:
-                case TransformType.CorrectionWithNormalizedHist: //Добавить выявление границ 
                     makeGreyAndHist(correction3);
                     break;
                 case TransformType.CorrectionWithEqualizationHist:
@@ -168,7 +161,6 @@ namespace CVLab01
         }
 
         private void applyFunctionCorrection_Click(object sender, EventArgs e){
-            //ЗДЕСЬ ДОБАВИТЬ НОРМАЛИЗАЦИЮ ГИСТОГРАММЫ
             if (currentType == TransformType.FunctionCorrection){
                 switch ((string)comboBoxFunctionCorrection.SelectedItem){
                     case "Линейная коррекция":
@@ -214,14 +206,24 @@ namespace CVLab01
         }
 
         private void changeApplyFunctionCorrection1_Click(object sender, EventArgs e){
-            correction3.Clear();
-            correction4.Clear();
+			if (currentType == TransformType.FunctionCorrection){
+				correction3.Clear();
+				correction3.RGBtoGrey();
+			}
+			else {
+				correction4.Clear();
+				correction4.RGBtoGrey();
+			}
+            
+			pictureBox2.Image = null;
+			pictureBoxHistCorrection2.Image = null;
+			chartHistCorrection2.Visible = false;
         }
 
         private void correctionWithEkvalizationHistToolStripMenuItem_Click(object sender, EventArgs e)
         {
             changeType();
-            correctionWithEqualizationHistToolStripMenuItem.Enabled = false;
+			correctionWithEkvalizationHistToolStripMenuItem.Enabled = false;
             panelFunctionCorrection.Visible = true;
             currentType = TransformType.CorrectionWithEqualizationHist;
             label1.Text = currentType.ToString();
@@ -230,22 +232,5 @@ namespace CVLab01
             if (pictureBox1.Image != null)
                 makeGreyAndHist(correction4);
         }
-
-        private void correctionWithNormalizedHistToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            changeType();
-            correctionWithNormalizedHistToolStripMenuItem.Enabled = false;
-            panelFunctionCorrection.Visible = true;
-            currentType = TransformType.CorrectionWithNormalizedHist;
-            label1.Text = currentType.ToString();
-
-            if (pictureBox1.Image != null)
-                makeGreyAndHist(correction3);
-
-            comboBoxFunctionCorrection.Visible = false;
-            gammaCounterFunctionCorrection.Visible = false;
-            numericUpDownCorrectionWithNormalizedHist2.Visible = true;
-            numericUpDownCorrectionWithNormalizedHist1.Visible = true;
-        }
-    }
+	}
 }

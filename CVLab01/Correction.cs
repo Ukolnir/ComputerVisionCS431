@@ -122,8 +122,10 @@ namespace CVLab01
 
             for (int x = 0; x < result.Width; ++x)
                 for (int y = 0; y < result.Height; ++y) {
-                    yuvImage[x, y].Y = Math.Pow(yuvImage[x, y].Y,gamma);
-                    var ytemp = Common.Clip((int)yuvImage[x, y].Y);
+					yuvImage[x, y].Y /= 255;
+					yuvImage[x, y].Y = Math.Pow(yuvImage[x, y].Y, 1/gamma);
+					yuvImage[x, y].Y *= 255;
+                    var ytemp = Common.Clip(((int)yuvImage[x, y].Y));
                     ++IntensityAfterTransform[ytemp];
                     result.SetPixel(x, y, Color.FromArgb(
                         ytemp,
