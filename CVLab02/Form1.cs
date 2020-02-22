@@ -33,13 +33,29 @@ namespace CVLab02
 
         private void savePictureToolStripMenuItem_Click(object sender, EventArgs e){
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                pictureBox1.Image.Save(saveFileDialog1.FileName, ImageFormat.Jpeg);
+                pictureBox2.Image.Save(saveFileDialog1.FileName, ImageFormat.Jpeg);
         }
 
         private void button1_Click(object sender, EventArgs e){
-            //Работает пока только для двух уровней квантования
-            pictureBox2.Image = Transformations.QuantizationImage(sourceFile,intensity,2);
-            //pictureBox2.Image = Transformations.QuantizationImage(sourceFile, intensity, (int)numericUpDown1.Value);
+            pictureBox2.Image = Transformations.QuantizationImage(sourceFile, (int)numericUpDown1.Value);
+        }
+
+        private void button2_Click(object sender, EventArgs e){
+            pictureBox2.Image = Transformations.Binarization(sourceFile, (int)numericUpDown2.Value);
+        }
+
+        private void button3_Click(object sender, EventArgs e){
+            pictureBox2.Image = Transformations.Binarization(sourceFile, (int)numericUpDown2.Value,true);
+        }
+
+        private void button4_Click(object sender, EventArgs e){
+            pictureBox2.Image = Transformations.BinarizationD(sourceFile, 
+                                            (int)numericUpDown2.Value,
+                                            (int)numericUpDown3.Value);
+        }
+
+        private void button5_Click(object sender, EventArgs e){
+            pictureBox2.Image = Transformations.GlobalOtsu(sourceFile, intensity);
         }
     }
 }
