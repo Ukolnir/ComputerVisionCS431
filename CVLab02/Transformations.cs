@@ -80,29 +80,34 @@ namespace CVLab02
             return dest;
         }
 
-        public static Bitmap GlobalOtsu(Bitmap src, int[] intensity) {
-            Bitmap dest = new Bitmap(src.Width, src.Height);
-            Color b = Color.Black, w = Color.White;
+        static int MethodOtsu(int[] intensity) {
             double[] disp = new double[256];
 
             int q = intensity[0];
             double m1 = 0, m2 = 0;
             double nt = 0, mt = 0;
-            for (int i = 0; i < 255; ++i) {
+            for (int i = 0; i < 255; ++i){
                 nt += intensity[i];
                 mt += intensity[i] * i;
             }
             mt /= nt;
 
-            for (int i = 1; i < 255; ++i) {
+            for (int i = 1; i < 255; ++i){
                 m1 = q * m1 + i * intensity[i];
                 q += intensity[i];
                 m2 = (mt - q * m1) / (1 - q);
-                disp[i] = q * (1 - q) * (m1 - m2)*(m1-m2);
+                disp[i] = q * (1 - q) * (m1 - m2) * (m1 - m2);
             }
 
             var lst = disp.ToList();
-            int maxT = lst.FindIndex(x => x == lst.Max());
+            return lst.FindIndex(x => x == lst.Max());
+        }
+
+        public static Bitmap GlobalOtsu(Bitmap src, int[] intensity) {
+            Bitmap dest = new Bitmap(src.Width, src.Height);
+            Color b = Color.Black, w = Color.White;
+
+            var maxT = MethodOtsu(intensity);
 
             for (int x = 0; x < dest.Width; ++x)
                 for (int y = 0; y < dest.Height; ++y){
@@ -114,5 +119,11 @@ namespace CVLab02
                 }
             return dest;
         }
+
+        public static Bitmap LocalOtsu(Bitmap src, int[] intensity) {
+            Bitmap dest = new Bitmap(src.Width, src.Height);
+            return dest;
+        }
     }
 }
+//Когда-нибудь я отрефакторю код, но не сейчас

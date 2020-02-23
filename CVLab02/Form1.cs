@@ -57,5 +57,10 @@ namespace CVLab02
         private void button5_Click(object sender, EventArgs e){
             pictureBox2.Image = Transformations.GlobalOtsu(sourceFile, intensity);
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
