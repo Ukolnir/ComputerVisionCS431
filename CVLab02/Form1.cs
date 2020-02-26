@@ -60,7 +60,12 @@ namespace CVLab02
 
         private void button6_Click(object sender, EventArgs e)
         {
+			pictureBox2.Image = Transformations.LocalOtsu(sourceFile);
+		}
 
-        }
-    }
+		private void button7_Click(object sender, EventArgs e)
+		{
+			pictureBox2.Image = Transformations.IerarhOtsu(sourceFile, intensity);
+		}
+	}
 }
