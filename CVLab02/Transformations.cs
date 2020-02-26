@@ -204,7 +204,7 @@ namespace CVLab02
 			return dest;
         }
 
-		public static Bitmap IerarhOtsu(Bitmap src, int[] intensity){
+		public static Bitmap IerarhOtsu(Bitmap src, int[] intensity, int recCount){
 			Bitmap dest = new Bitmap(src.Width, src.Height);
 			Color b = Color.Black, w = Color.White;
 
@@ -215,7 +215,7 @@ namespace CVLab02
 			for (int i = 0; i < intensity.Length; ++i)
 				intensityD[i] = 1.0 * intensity[i] / cntPix;
 
-			RecMethodOtsu(intensityD, listT, 4);
+			RecMethodOtsu(intensityD, listT, recCount);
 			listT = listT.OrderBy(x=>x).ToList();
 
 			for (int x = 0; x < dest.Width; ++x)

@@ -65,7 +65,7 @@ namespace CVLab02
 
 		private void button7_Click(object sender, EventArgs e)
 		{
-			pictureBox2.Image = Transformations.IerarhOtsu(sourceFile, intensity);
+			pictureBox2.Image = Transformations.IerarhOtsu(sourceFile, intensity, (int)numericUpDown4.Value);
 		}
 	}
 }
