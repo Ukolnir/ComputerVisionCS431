@@ -8,27 +8,6 @@ namespace CVLab02
 {
     class Transformations
     {
-		public static List<Tuple<Bitmap,int[]>> GetDividedImages(Bitmap src) {
-			var result = new List<Tuple<Bitmap, int[]>>();
-			int div = src.Height / 2;
-
-			for (int i = 0; i < div; ++i) {
-				Bitmap dest = new Bitmap(src.Width, div*(i+1));
-				int[] inten = new int[256];
-				for (int x = 0; x < dest.Width; ++x)
-					for (int y = 0; y < dest.Height; ++y) {
-						var t = src.GetPixel(x,y);
-						++inten[t.R];
-						dest.SetPixel(x, y, t);
-					}
-				result.Add(Tuple.Create(dest,inten));
-			}
-
-			return result;
-		}
-
-
-
         public static int[] RGBtoGrey(Bitmap src, ref Bitmap dest) {
             dest = new Bitmap(src.Width, src.Height);
             int[] intensity = new int[256];
