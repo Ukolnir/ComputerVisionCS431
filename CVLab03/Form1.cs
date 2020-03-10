@@ -49,7 +49,7 @@ namespace CVLab03
 
             var b3 = Operations.Or(b, b2);
 
-            var b4 = Operations.Opening(b3,
+            /*var b4 = Operations.Opening(b3,
                 Operations.BitmapToArr(new Bitmap(maskNames[2])));
 
             var b5 = Operations.Dilate(b4,
@@ -68,8 +68,16 @@ namespace CVLab03
             var b100 = Operations.Difference(b7, b9);
             var b101 = Operations.Dilate(b100,
                    Operations.BitmapToArr(new Bitmap(maskNames[6])));
-            var b10 = Operations.Or(b101,b9);
-            pictureBox2.Image = Operations.ArrToBitmap(b10);
+            var b10 = Operations.Or(b101,b9);*/
+            pictureBox2.Image = Operations.ArrToBitmap(b3);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var b = Operations.BitmapToArr(sourceFile);
+            var b1 = Operations.Erode(b,
+                    Operations.BitmapToArr(new Bitmap(maskNames[0])));
+            pictureBox2.Image = Operations.ArrToBitmap(b1);
         }
 
         /*
