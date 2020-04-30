@@ -24,6 +24,9 @@ namespace CVLab02
         static Color[] colors = new Color[] { Color.Gainsboro, Color.LightGreen, Color.Goldenrod,
             Color.OrangeRed, Color.Cyan, Color.DarkCyan, Color.Bisque, Color.YellowGreen };
 
+        static Color[] colors1 = new Color[] { Color.Black, Color.Black, Color.White,
+            Color.OrangeRed, Color.Cyan, Color.DarkCyan, Color.Bisque, Color.YellowGreen };
+
         public static Bitmap QuantizationImage(Bitmap src, int level) {
             Bitmap dest = new Bitmap(src.Width, src.Height);
             var sl = 255 / level;
@@ -38,12 +41,29 @@ namespace CVLab02
                     var first = limits.FindIndex(c => c > t.R);
 
                     if (first == -1)
-                        dest.SetPixel(x, y, colors[level - 1]);
+                        dest.SetPixel(x, y, colors1[level - 1]);
                     else
-                        dest.SetPixel(x, y, colors[first]);
+                        dest.SetPixel(x, y, colors1[first]);
                 }
             return dest;
         }
+
+        public static Bitmap GetBinary(Bitmap src) {
+            Bitmap dest = new Bitmap(src.Width, src.Height);
+            Color c = Color.Goldenrod;
+            Console.WriteLine(c.R + " " + c.G + " " + c.B);
+            for (int x = 0; x < dest.Width; ++x)
+                for (int y = 0; y < dest.Height; ++y) {
+                    var t = src.GetPixel(x, y);
+                    if (t.R == c.R)
+                        dest.SetPixel(x, y, Color.White);
+                    else
+                        dest.SetPixel(x, y, Color.Black);
+                }
+            return dest;
+        }
+
+
 
         //true - нижняя пороговая бинаризация
         public static Bitmap Binarization(Bitmap src, int limit, bool typeBin = false) {
